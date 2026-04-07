@@ -24,6 +24,9 @@ class Wall : public Object {
 
         virtual void Action() {};
 
+        virtual game::map::Type GetType() const {
+            return game::map::Type::kWall;
+        };
 };
 
 };

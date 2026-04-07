@@ -10,19 +10,8 @@ static const size_t kSpeed = 50;
 
 static const size_t kDefaultSpeed = 10;
 
-Client::Client()
-    :game_(nullptr), pos_(0, 0), radius_(kSpeed) {}
-
-Client::Client(const math::Vec2f &pos)
-    :game_(nullptr), pos_(pos), radius_(kSpeed) {}
-
-Client::Client(const math::Vec2f &pos, double radius)
-    :game_(nullptr), pos_(pos), radius_(radius) {}
-
 void Client::Action() {
-    // Eat();
-
-    // Move();
+    Move();
 };
 
 void Client::Move() {
@@ -63,16 +52,16 @@ void Client::Move() {
     pos_.Clamp({0, 0}, {game::kWindowWidth - 2 * radius_, game::kWindowHeight - 2 * radius_});
 };
 
-void Client::Eat() {
-    auto &foods = game_->GetFoods();
-
-    for (size_t i = 0; i < foods.size(); i++) {
-        if ((foods[i].GetPos() - pos_).Module() < radius_ + game::kFoodRadius) {
-            radius_ += foods[i].GetWeight();
-            foods.erase(foods.begin() + i);
-            i--;
-        }
-    }
-};
+// void Client::Eat() {
+//     auto &foods = game_->GetFoods();
+//
+//     for (size_t i = 0; i < foods.size(); i++) {
+//         if ((foods[i].GetPos() - pos_).Module() < radius_ + game::kFoodRadius) {
+//             radius_ += foods[i].GetWeight();
+//             foods.erase(foods.begin() + i);
+//             i--;
+//         }
+//     }
+// };
 
 };

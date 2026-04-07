@@ -1,64 +1,35 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
+#include "object.hpp"
 
-#include "math/vertex.hpp"
-
-namespace game {
-
-class Game;
-
-};
+#include "image/image.hpp"
 
 namespace client {
 
-class Client {
+static const std::string kClientImageFileName = "data/Guy.png";
+
+class Client : public Object {
     private:
-        game::Game* game_;
-        math::Vec2f pos_;
-        double radius_;
+        image::Image image_;
 
     public:
-        Client();
+        Client(const math::Vec2u &pos)
+            :Object(pos), image_(pos, kClientImageFileName) {};
 
-        Client(const math::Vec2f &pos);
+        ~Client() = default;
 
-        Client(const math::Vec2f &pos, double radius);
-
-        void Draw(sf::RenderWindow &window) {
-            sf::CircleShape c(radius_);
-
-            c.setFillColor(sf::Color::Red);
-            c.setPosition(pos_.GetX(), pos_.GetY());
-
-            window.draw(c);
+        virtual void Draw(sf::RenderWindow &window) {
+            image_.Draw(window);
         };
 
-        void Action();
+        virtual void Action();
 
-        double GetRadius() {
-            return radius_;
-        };
-
-        double GetX() {
-            return pos_.GetX();
-        };
-
-        double GetY() {
-            return pos_.GetY();
-        };
-
-        void SetGame(::game::Game *game) {
-            game_ = game;
+        virtual game::map::Type GetType() const {
+            return game::map::Type::kClient;
         };
 
     private:
         void Move();
-
-        void Eat();
 };
 
 };

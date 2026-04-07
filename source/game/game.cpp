@@ -11,14 +11,11 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
-#include "game/food.hpp"
-
 namespace game {
 
-static const std::string kWindowName = "agar.io";
+static const std::string kWindowName = "Bomber";
 
-static const size_t kFoodNumber = 1000;
-static const size_t kClientsNumber = 10;
+static const size_t kBoxesNumber = 100;
 
 static const size_t kClientMaxRadius = 30;
 static const size_t kClientMinRadius = 10;
@@ -27,11 +24,9 @@ void RunGame() {
     sf::RenderWindow window(sf::VideoMode (kWindowWidth, kWindowHeight), kWindowName);
 
     Game game;
-    // game.AddClient({{100, 100}, 50});
-    // game.AddClient({{300, 300}, 25});
 
-    game.GenerateFood(kFoodNumber);
-    game.GenerateClients(kClientsNumber);
+    game.GenerateBoxes(kBoxesNumber);
+    game.GenerateClients();
 
     sf::Event event;
     while (window.isOpen()) {
@@ -55,18 +50,25 @@ void RunGame() {
     window.close();
 }
 
-void Game::GenerateFood(size_t number) {
+void Game::GenerateBoxes(size_t number) {
     for(size_t i = 0; i < number; i++) {
-        AddFood({{((double)rand() * kWindowWidth) / RAND_MAX, ((double)rand() * kWindowHeight) / RAND_MAX},
-                        (rand() * kFoodMaxWeight) / RAND_MAX + kFoodMinWeight});
+        size_t width = (rand() * map::kMapWidth) / RAND_MAX;
+        size_t height = (rand() * map::kMapHeight) / RAND_MAX;
+
+        auto &elem = map_[width + height * map::kMapWidth];
+        if (elem.top != nullptr || elem.bottom == nullptr || elem.bottom->GetType() != map::Type::kFree) {
+            continue;
+        }
+
+        AddBox(new client::Box{{width, height}});
     }
 }
 
-void Game::GenerateClients(size_t number) {
-    for(size_t i = 0; i < number; i++) {
-        AddClient({{((double)rand() * kWindowWidth) / RAND_MAX, ((double)rand() * kWindowHeight) / RAND_MAX},
-                        ((double)rand() * kClientMaxRadius) / RAND_MAX + kClientMinRadius});
-    }
+void Game::GenerateClients() {
+    AddClient(new client::Client({1, 1}));
+    AddClient(new client::Client({map::kMapWidth - 2, 1}));
+    AddClient(new client::Client({1, map::kMapHeight - 2}));
+    AddClient(new client::Client({map::kMapWidth - 2, map::kMapHeight - 2}));
 }
 
 };

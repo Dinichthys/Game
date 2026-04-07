@@ -4,6 +4,8 @@
 
 #include "math/vertex.hpp"
 
+#include "game/map.hpp"
+
 namespace game {
 
 class Game;
@@ -27,11 +29,13 @@ class Object {
 
         virtual void Action() = 0;
 
-        double GetX() {
+        virtual game::map::Type GetType() const = 0;
+
+        size_t GetX() {
             return pos_.x_;
         };
 
-        double GetY() {
+        size_t GetY() {
             return pos_.y_;
         };
 

@@ -1,8 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
-
-#include "client/object.hpp"
+#include <vector>
 
 namespace game {
 
@@ -13,7 +12,8 @@ enum Type {
     kFree,
     kClient,
     kBomb,
-    kFire
+    kFire,
+    kBox
 };
 
 static constexpr const size_t kMapWidth = 21;

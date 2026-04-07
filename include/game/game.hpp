@@ -7,45 +7,58 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
-#include "client/client.hpp"
 #include "client/object.hpp"
+#include "client/client.hpp"
 #include "client/wall.hpp"
 #include "client/free.hpp"
-
-#include "game/food.hpp"
+#include "client/box.hpp"
+#include "client/bomb.hpp"
+#include "client/fire.hpp"
 
 #include "map.hpp"
 
 namespace game {
 
+struct MapElem {
+    client::Object *top;
+    client::Object *bottom;
+};
+
 class Game {
     private:
-        std::vector<::client::Client> clients_;
-        std::vector<Food> foods_;
+        std::vector<client::Client *> clients_;
+        std::vector<client::Box *> boxes_;
 
-        std::vector<client::Object *> map_;
+        std::vector<MapElem> map_;
 
     public:
         Game()
-            :clients_(), foods_() {
+            :clients_(), boxes_() {
             for (size_t y = 0; y < map::kMapHeight; y++) {
                 for (size_t x = 0; x < map::kMapWidth; x++) {
                     switch(map::kMap[x + y * map::kMapWidth]) {
                         case map::Type::kBomb : {
+                            map_.push_back({new client::Bomb({x, y}), nullptr});
                             break;
                         };
                         case map::Type::kClient : {
+                            map_.push_back({new client::Client({x, y}), nullptr});
                             break;
                         };
                         case map::Type::kFire : {
+                            map_.push_back({new client::Fire({x, y}), nullptr});
+                            break;
+                        };
+                        case map::Type::kBox : {
+                            map_.push_back({new client::Box({x, y}), nullptr});
                             break;
                         };
                         case map::Type::kFree : {
-                            map_.push_back(new client::Free({x, y}));
+                            map_.push_back({nullptr, new client::Free({x, y})});
                             break;
                         };
                         case map::Type::kWall : {
-                            map_.push_back(new client::Wall({x, y}));
+                            map_.push_back({new client::Wall({x, y}), nullptr});
                             break;
                         };
                     }
@@ -55,63 +68,62 @@ class Game {
 
         ~Game() {
             for (auto elem : map_) {
-                delete elem;
+                delete elem.top;
+                delete elem.bottom;
             }
         };
 
-        void AddClient(::client::Client &c) {
-            c.SetGame(this);
-            clients_.push_back(c);
-        };
-        void AddClient(::client::Client &&c) {
-            c.SetGame(this);
+        void AddClient(client::Client *c) {
+            auto &elem = map_[c->GetX() + c->GetY() * map::kMapWidth];
+            if (elem.top != nullptr) {
+                delete elem.top;
+            }
+            c->SetGame(this);
+            elem.top = c;
             clients_.push_back(c);
         };
 
-        void AddFood(Food &&f) {
-            foods_.push_back(f);
+        void AddBox(client::Box *b) {
+            auto &elem = map_[b->GetX() + b->GetY() * map::kMapWidth];
+            if (elem.top != nullptr) {
+                delete elem.top;
+            }
+            b->SetGame(this);
+            elem.top = b;
+            boxes_.push_back(b);
         };
 
         void Draw(sf::RenderWindow &window) {
             DrawMap(window);
-            DrawFoods(window);
-            DrawClients(window);
         };
 
         void ClientsAction() {
-            for (auto &c : clients_) {
-                c.Action();
+            for (auto c : clients_) {
+                c->Action();
             }
         };
 
-        std::vector<::client::Client> &GetClients() {
+        std::vector<client::Client *> &GetClients() {
             return clients_;
         };
 
-        std::vector<Food> &GetFoods() {
-            return foods_;
+        std::vector<client::Box *> &GetFoods() {
+            return boxes_;
         };
 
-        void GenerateFood(size_t number);
+        void GenerateBoxes(size_t number);
 
-        void GenerateClients(size_t number);
+        void GenerateClients();
 
     private:
-        void DrawClients(sf::RenderWindow &window) {
-            for (auto &c : clients_) {
-                c.Draw(window);
-            }
-        };
-
-        void DrawFoods(sf::RenderWindow &window) {
-            for (auto &f : foods_) {
-                f.Draw(window);
-            }
-        };
-
         void DrawMap(sf::RenderWindow &window) {
             for (auto &elem : map_) {
-                elem->Draw(window);
+                if (elem.bottom) {
+                    elem.bottom->Draw(window);
+                }
+                if (elem.top) {
+                    elem.top->Draw(window);
+                }
             }
         };
 };
