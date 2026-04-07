@@ -1,9 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
 
 #include "math/vertex.hpp"
 
@@ -17,26 +14,25 @@ namespace client {
 
 class Object {
     private:
-        ::game::Game* game_;
-        ::math::Vertex pos_;
+        game::Game* game_;
+        math::Vec2u pos_;
 
     public:
-        Object();
+        Object(const math::Vec2u &pos)
+            :game_(nullptr), pos_(pos) {};
 
-        Object(const ::math::Vertex &pos);
+        virtual ~Object() {};
 
-        Object(const ::math::Vertex &pos, double radius);
+        virtual void Draw(sf::RenderWindow &window) = 0;
 
-        virtual void Draw(sf::RenderWindow &window);
-
-        virtual void Action();
+        virtual void Action() = 0;
 
         double GetX() {
-            return pos_.GetX();
+            return pos_.x_;
         };
 
         double GetY() {
-            return pos_.GetY();
+            return pos_.y_;
         };
 
         void SetGame(::game::Game *game) {

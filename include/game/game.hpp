@@ -8,8 +8,13 @@
 #include <SFML/System.hpp>
 
 #include "client/client.hpp"
+#include "client/object.hpp"
+#include "client/wall.hpp"
+#include "client/free.hpp"
 
 #include "game/food.hpp"
+
+#include "map.hpp"
 
 namespace game {
 
@@ -18,8 +23,41 @@ class Game {
         std::vector<::client::Client> clients_;
         std::vector<Food> foods_;
 
+        std::vector<client::Object *> map_;
+
     public:
-        Game() = default;
+        Game()
+            :clients_(), foods_() {
+            for (size_t y = 0; y < map::kMapHeight; y++) {
+                for (size_t x = 0; x < map::kMapWidth; x++) {
+                    switch(map::kMap[x + y * map::kMapWidth]) {
+                        case map::Type::kBomb : {
+                            break;
+                        };
+                        case map::Type::kClient : {
+                            break;
+                        };
+                        case map::Type::kFire : {
+                            break;
+                        };
+                        case map::Type::kFree : {
+                            map_.push_back(new client::Free({x, y}));
+                            break;
+                        };
+                        case map::Type::kWall : {
+                            map_.push_back(new client::Wall({x, y}));
+                            break;
+                        };
+                    }
+                }
+            }
+        };
+
+        ~Game() {
+            for (auto elem : map_) {
+                delete elem;
+            }
+        };
 
         void AddClient(::client::Client &c) {
             c.SetGame(this);
@@ -35,6 +73,7 @@ class Game {
         };
 
         void Draw(sf::RenderWindow &window) {
+            DrawMap(window);
             DrawFoods(window);
             DrawClients(window);
         };
@@ -69,10 +108,18 @@ class Game {
                 f.Draw(window);
             }
         };
+
+        void DrawMap(sf::RenderWindow &window) {
+            for (auto &elem : map_) {
+                elem->Draw(window);
+            }
+        };
 };
 
-static const size_t kWindowWidth = 1080;
-static const size_t kWindowHeight = 720;
+static const size_t kElemSize = 50;
+
+static const size_t kWindowWidth = kElemSize * map::kMapWidth;
+static const size_t kWindowHeight = kElemSize * map::kMapHeight;
 
 void RunGame();
 

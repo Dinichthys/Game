@@ -13,14 +13,14 @@ static const size_t kDefaultSpeed = 10;
 Client::Client()
     :game_(nullptr), pos_(0, 0), radius_(kSpeed) {}
 
-Client::Client(const ::math::Vertex &pos)
+Client::Client(const math::Vec2f &pos)
     :game_(nullptr), pos_(pos), radius_(kSpeed) {}
 
-Client::Client(const ::math::Vertex &pos, double radius)
+Client::Client(const math::Vec2f &pos, double radius)
     :game_(nullptr), pos_(pos), radius_(radius) {}
 
 void Client::Action() {
-    Eat();
+    // Eat();
 
     // Move();
 };

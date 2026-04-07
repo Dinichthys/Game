@@ -9,6 +9,8 @@ add_executable (${PROJECT_NAME}
     source/client/client.cpp
 
     source/game/game.cpp
+
+    source/image/image.cpp
 )
 
 target_include_directories (${PROJECT_NAME}

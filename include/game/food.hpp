@@ -15,18 +15,18 @@ static const size_t kFoodMinWeight = 5;
 
 class Food {
     private:
-        ::math::Vertex pos_;
+        math::Vec2f pos_;
         size_t weight_;
 
     public:
-        Food(const ::math::Vertex &pos, size_t weight)
+        Food(const math::Vec2f &pos, size_t weight)
             :pos_(pos), weight_(weight) {};
 
         size_t GetWeight() const {
             return weight_;
         };
 
-        ::math::Vertex GetPos() const {
+        math::Vec2f GetPos() const {
             return pos_;
         };
 

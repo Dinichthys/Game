@@ -17,16 +17,16 @@ namespace client {
 
 class Client {
     private:
-        ::game::Game* game_;
-        ::math::Vertex pos_;
+        game::Game* game_;
+        math::Vec2f pos_;
         double radius_;
 
     public:
         Client();
 
-        Client(const ::math::Vertex &pos);
+        Client(const math::Vec2f &pos);
 
-        Client(const ::math::Vertex &pos, double radius);
+        Client(const math::Vec2f &pos, double radius);
 
         void Draw(sf::RenderWindow &window) {
             sf::CircleShape c(radius_);
