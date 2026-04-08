@@ -41,6 +41,11 @@ struct Vec2u {
     size_t y_;
 };
 
+struct Vec2s {
+    ssize_t x_;
+    ssize_t y_;
+};
+
 struct Rect2f {
     Vec2f size_;
     Vec2f pos_;

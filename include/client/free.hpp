@@ -9,20 +9,17 @@ namespace client {
 static const std::string kFreeImageFileName = "data/Grass.png";
 
 class Free : public Object {
-    private:
-        image::Image image_;
-
     public:
         Free(const math::Vec2u &pos)
-            :Object(pos), image_(pos, kFreeImageFileName) {};
+            :Object(pos) {
+            image_.LoadImageFromFile(kFreeImageFileName);
+        };
 
         ~Free() = default;
 
         virtual void Draw(sf::RenderWindow &window) {
             image_.Draw(window);
         };
-
-        virtual void Action() {};
 
         virtual game::map::Type GetType() const {
             return game::map::Type::kFree;

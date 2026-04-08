@@ -11,10 +11,17 @@ namespace image {
 
 static const size_t kRGBASizeEncoding = 4;
 
-Image::Image(const math::Vec2u &pos, const std::string &file_name)
+Image::Image(const math::Vec2u &pos)
     :uploaded_(false), sprite_(), texture_(),
     rect_info_({{game::kElemSize, game::kElemSize}, {double(pos.x_ * game::kElemSize), double(pos.y_ * game::kElemSize)}}),
-    data_(), data_size_() {
+    data_(), data_size_() {};
+
+void Image::SetPos(const math::Vec2u &new_pos) {
+    rect_info_.pos_ = {double(new_pos.x_ * game::kElemSize), double(new_pos.y_ * game::kElemSize)};
+    sprite_.setPosition(rect_info_.pos_.x_, rect_info_.pos_.y_);
+};
+
+void Image::LoadImageFromFile(const std::string &file_name) {
     SetPicture(file_name);
     ImageDataRedraw();
     sprite_.setTexture(texture_);

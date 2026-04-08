@@ -19,11 +19,15 @@ class Image {
         math::Vec2u data_size_;
 
     public:
-        Image(const math::Vec2u &pos, const std::string &file_name);
+        Image(const math::Vec2u &pos);
+
+        void LoadImageFromFile(const std::string &file_name);
 
         void Draw(sf::RenderWindow &window) {
             window.draw(sprite_);
         };
+
+        void SetPos(const math::Vec2u &new_pos);
 
     private:
         void ImageDataRedraw();

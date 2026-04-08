@@ -10,46 +10,72 @@ static const size_t kSpeed = 50;
 
 static const size_t kDefaultSpeed = 10;
 
+static size_t ManhattanDistance(const math::Vec2u &a, const math::Vec2u &b);
+
+void Client::Animate(sf::RenderWindow &window) {
+
+};
+
 void Client::Action() {
     Move();
 };
 
 void Client::Move() {
-    auto &clients = game_->GetClients();
+    auto &boxes = game_->GetBoxes();
 
-    double max_r_eat = 0;
-    double max_x_eat = 0;
-    double max_y_eat = 0;
+    size_t min_distance = std::numeric_limits<size_t>::max();
+    math::Vec2u pos = {0, 0};
 
-    double max_r_hunter = std::numeric_limits<double>::max();
-    double max_x_hunter = 0;
-    double max_y_hunter = 0;
-    for (auto &c : clients) {
-        double r = c.GetRadius();
+    for (auto &b : boxes) {
+        size_t distance = ManhattanDistance(b->GetPos(), pos_);
 
-        if ((r < radius_) && (r > max_r_eat)) {
-            max_r_eat = r;
-            max_x_eat = c.GetX();
-            max_y_eat = c.GetY();
-        } else if ((r > radius_) && (r < max_r_hunter)) {
-            max_r_hunter = r;
-            max_x_hunter = c.GetX();
-            max_y_hunter = c.GetY();
+        if (distance < min_distance) {
+            min_distance = distance;
+            pos = b->GetPos();
         }
     }
 
-    if (max_r_eat < radius_) {
-        pos_.GetX() += (max_x_eat - pos_.GetX()) * kSpeed / radius_;
-        pos_.GetY() += (max_y_eat - pos_.GetY()) * kSpeed / radius_;
-    } else if (max_r_hunter > radius_) {
-        pos_.GetX() -= (max_x_hunter - pos_.GetX()) * kSpeed / radius_;
-        pos_.GetY() -= (max_y_hunter - pos_.GetY()) * kSpeed / radius_;
-    } else {
-        pos_.GetX() += kDefaultSpeed;
-        pos_.GetY() += kDefaultSpeed;
+    if (min_distance == 1 && game_->GetType(pos_) != game::map::Type::kBomb) {
+        game_->AddBomb(pos_);
+        return;
     }
 
-    pos_.Clamp({0, 0}, {game::kWindowWidth - 2 * radius_, game::kWindowHeight - 2 * radius_});
+    math::Vec2s dir[4] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    game::map::Type neigh[4] = {
+        game_->GetType({pos_.x_ + 1, pos_.y_}), // r
+        game_->GetType({pos_.x_ - 1, pos_.y_}), // l
+        game_->GetType({pos_.x_, pos_.y_ + 1}), // t
+        game_->GetType({pos_.x_, pos_.y_ - 1}), // b
+    };
+
+    if (pos_.x_ < pos.x_ && neigh[0] == game::map::Type::kFree) {
+        game_->Move(this, dir[0]);
+        return;
+    }
+    if (pos_.x_ > pos.x_ && neigh[1]== game::map::Type::kFree) {
+        game_->Move(this, dir[1]);
+        return;
+    }
+    if (pos_.y_ < pos.y_ && neigh[2] == game::map::Type::kFree) {
+        game_->Move(this, dir[2]);
+        return;
+    }
+    if (pos_.y_ > pos.y_ && neigh[3] == game::map::Type::kFree) {
+        game_->Move(this, dir[3]);
+        return;
+    }
+
+    for (size_t i = 0; i < 4; i++) {
+        if (neigh[i] == game::map::Type::kFree) {
+            game_->Move(this, dir[i]);
+            return;
+        }
+    }
+};
+
+static size_t ManhattanDistance(const math::Vec2u &a, const math::Vec2u &b) {
+    return std::abs(int64_t(b.x_) - int64_t(a.x_)) + std::abs(int64_t(b.y_) - int64_t(a.y_));
 };
 
 // void Client::Eat() {

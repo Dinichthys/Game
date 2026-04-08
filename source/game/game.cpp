@@ -25,8 +25,8 @@ void RunGame() {
 
     Game game;
 
-    game.GenerateBoxes(kBoxesNumber);
     game.GenerateClients();
+    game.GenerateBoxes(kBoxesNumber);
 
     sf::Event event;
     while (window.isOpen()) {
@@ -38,13 +38,15 @@ void RunGame() {
         }
         window.clear();
 
-        game.ClientsAction();
+        game.Action();
+
+        game.Animate(window);
 
         game.Draw(window);
 
         window.display();
 
-        usleep(1000000);
+        usleep(500000);
     }
 
     window.close();
@@ -56,7 +58,7 @@ void Game::GenerateBoxes(size_t number) {
         size_t height = (rand() * map::kMapHeight) / RAND_MAX;
 
         auto &elem = map_[width + height * map::kMapWidth];
-        if (elem.top != nullptr || elem.bottom == nullptr || elem.bottom->GetType() != map::Type::kFree) {
+        if (elem.back() != nullptr && elem.back()->GetType() != map::Type::kFree) {
             continue;
         }
 

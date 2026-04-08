@@ -7,6 +7,8 @@ add_executable (${PROJECT_NAME}
     source/server/server.cpp
 
     source/client/client.cpp
+    source/client/bomb.cpp
+    source/client/fire.cpp
 
     source/game/game.cpp
 

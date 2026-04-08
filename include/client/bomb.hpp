@@ -8,13 +8,18 @@ namespace client {
 
 static const std::string kBombImageFileName = "data/Bomb.png";
 
+static const size_t kStartClockNum = 3;
+
 class Bomb : public Object {
     private:
-        image::Image image_;
+        size_t clock_;
 
     public:
         Bomb(const math::Vec2u &pos)
-            :Object(pos), image_(pos, kBombImageFileName) {};
+            :Object(pos){
+            image_.LoadImageFromFile(kBombImageFileName);
+            clock_ = kStartClockNum;
+        };
 
         ~Bomb() = default;
 
@@ -22,11 +27,19 @@ class Bomb : public Object {
             image_.Draw(window);
         };
 
-        virtual void Action() {};
+        virtual void Action() {
+            clock_--;
+            if (clock_ == 0) {
+                Boom();
+            }
+        };
 
         virtual game::map::Type GetType() const {
             return game::map::Type::kBomb;
         };
+
+    private:
+        void Boom();
 };
 
 };
