@@ -26,6 +26,9 @@ struct Vec2f {
     Vec2f operator-(const Vec2f &o) {
         return {x_ - o.x_, y_ - o.y_};
     };
+    Vec2f operator+(const Vec2f &o) {
+        return {x_ + o.x_, y_ + o.y_};
+    };
 
     double SquareDistance() {
         return x_ * x_ + y_ * y_;

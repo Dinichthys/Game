@@ -21,6 +21,11 @@ void Image::SetPos(const math::Vec2u &new_pos) {
     sprite_.setPosition(rect_info_.pos_.x_, rect_info_.pos_.y_);
 };
 
+void Image::Move(const math::Vec2f &new_pos) {
+    rect_info_.pos_ = rect_info_.pos_ + new_pos;
+    sprite_.setPosition(rect_info_.pos_.x_, rect_info_.pos_.y_);
+};
+
 void Image::LoadImageFromFile(const std::string &file_name) {
     SetPicture(file_name);
     ImageDataRedraw();

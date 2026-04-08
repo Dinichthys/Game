@@ -36,7 +36,6 @@ void RunGame() {
                 break;
             }
         }
-        window.clear();
 
         game.Action();
 
@@ -46,7 +45,7 @@ void RunGame() {
 
         window.display();
 
-        usleep(500000);
+        usleep(kTimePerFrameUSec);
     }
 
     window.close();

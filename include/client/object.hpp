@@ -33,7 +33,7 @@ class Object {
 
         virtual void Action() {};
 
-        virtual void Animate(sf::RenderWindow &) {};
+        virtual void Animate() {};
 
         virtual game::map::Type GetType() const = 0;
 

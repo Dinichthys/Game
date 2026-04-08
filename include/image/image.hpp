@@ -29,6 +29,8 @@ class Image {
 
         void SetPos(const math::Vec2u &new_pos);
 
+        void Move(const math::Vec2f &new_pos);
+
     private:
         void ImageDataRedraw();
         void SetPicture(const std::string& file_name);

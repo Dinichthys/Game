@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <unistd.h>
+#include <set>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -19,17 +21,23 @@
 
 namespace game {
 
+static const size_t kAnimationFramesNum = 10;
+static const size_t kAnimationTimePerFrameUSec = 30000;
+static const size_t kTimePerFrameUSec = 30000;
+
 class Game {
     private:
         std::vector<client::Client *> clients_;
         std::vector<client::Box *> boxes_;
         std::vector<client::Bomb *> bombs_;
 
+        std::set<image::Image *>top_level_;
+
         std::vector<std::vector<client::Object *>> map_;
 
     public:
         Game()
-            :clients_(), boxes_(), bombs_() {
+            :clients_(), boxes_(), bombs_(), top_level_() {
             for (size_t y = 0; y < map::kMapHeight; y++) {
                 for (size_t x = 0; x < map::kMapWidth; x++) {
                     switch(map::kMap[x + y * map::kMapWidth]) {
@@ -93,21 +101,36 @@ class Game {
             bombs_.push_back(b);
         };
 
+        void AddTopLevelImage(image::Image *image) {
+            top_level_.insert(image);
+        };
+        void EraseTopLevelImage(image::Image *image) {
+            top_level_.erase(image);
+        };
+
         map::Type GetType(const math::Vec2u &pos) const {
             return map_[pos.x_ + pos.y_* map::kMapWidth].back()->GetType();
         };
 
         void Animate(sf::RenderWindow &window) {
-            for (auto c : clients_) {
-                c->Animate(window);
-            }
-            for (auto b : bombs_) {
-                b->Animate(window);
+            for (size_t i = 0; i < kAnimationFramesNum; i++) {
+                for (auto &elems : map_) {
+                    for (auto elem : elems) {
+                        elem->Animate();
+                    }
+                }
+                Draw(window);
+
+                window.display();
+
+                usleep(kAnimationTimePerFrameUSec);
             }
         };
 
         void Draw(sf::RenderWindow &window) {
+            window.clear();
             DrawMap(window);
+            DrawTopLevel(window);
         };
 
         void Action() {
@@ -237,6 +260,12 @@ class Game {
                 for (auto &elem : elems) {
                     elem->Draw(window);
                 }
+            }
+        };
+
+        void DrawTopLevel(sf::RenderWindow &window) {
+            for (auto &image : top_level_) {
+                image->Draw(window);
             }
         };
 };
