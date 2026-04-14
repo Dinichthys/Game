@@ -1,5 +1,9 @@
 #pragma once
 
+#include <map>
+#include <string>
+#include <sstream>
+
 #include <SFML/Graphics.hpp>
 
 #include "math/vertex.hpp"
@@ -57,6 +61,31 @@ class Object {
             pos_ = new_pos;
             image_.SetPos(new_pos);
         };
+
+        image::Image *GetImage() {
+            return &image_;
+        };
+
+        void UpdateTexture(std::istringstream &msg);
+        void SetPos(std::istringstream &msg);
+        void Move(std::istringstream &msg);
+        void LoadFromFile(std::istringstream &msg);
+};
+
+enum ImageMethodType {
+    kImageSetPos,
+    kImageMove,
+    kImageLoadFromFile
+};
+
+static const std::string kImageSetPosStr        = "SetPos";
+static const std::string kImageMoveStr          = "Move";
+static const std::string kImageLoadFromFileStr  = "LoadFromFile";
+
+static const std::map<std::string, ImageMethodType> kImageStrToMethod {
+    {kImageSetPosStr, kImageSetPos},
+    {kImageMoveStr, kImageMove},
+    {kImageLoadFromFileStr, kImageLoadFromFile}
 };
 
 };

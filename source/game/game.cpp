@@ -20,12 +20,17 @@ static const size_t kBoxesNumber = 100;
 static const size_t kClientMaxRadius = 30;
 static const size_t kClientMinRadius = 10;
 
+static void GenerateClients(server::Server &server);
+
 void RunGame() {
     sf::RenderWindow window(sf::VideoMode (kWindowWidth, kWindowHeight), kWindowName);
 
     Game game;
 
-    game.GenerateClients();
+    server::Server server;
+    server.AddPlugin(&game);
+
+    GenerateClients(server);
     game.GenerateBoxes(kBoxesNumber);
 
     sf::Event event;
@@ -65,11 +70,11 @@ void Game::GenerateBoxes(size_t number) {
     }
 }
 
-void Game::GenerateClients() {
-    AddClient(new client::Client({1, 1}));
-    AddClient(new client::Client({map::kMapWidth - 2, 1}));
-    AddClient(new client::Client({1, map::kMapHeight - 2}));
-    AddClient(new client::Client({map::kMapWidth - 2, map::kMapHeight - 2}));
+static void GenerateClients(server::Server &server) {
+    server.AddClient(new client::ServerClient({1, 1}));
+    server.AddClient(new client::ServerClient({map::kMapWidth - 2, 1}));
+    server.AddClient(new client::ServerClient({1, map::kMapHeight - 2}));
+    server.AddClient(new client::ServerClient({map::kMapWidth - 2, map::kMapHeight - 2}));
 }
 
 };

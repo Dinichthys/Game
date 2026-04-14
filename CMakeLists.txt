@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.20)
-project (circles CXX)
+project (game CXX)
 
 add_executable (${PROJECT_NAME}
     source/main.cpp
@@ -9,6 +9,7 @@ add_executable (${PROJECT_NAME}
     source/client/client.cpp
     source/client/bomb.cpp
     source/client/fire.cpp
+    source/client/object.cpp
 
     source/game/game.cpp
 
